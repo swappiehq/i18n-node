@@ -183,6 +183,26 @@ describe('Module API', function() {
         should.equal(__('Hello'), 'Hallo');
       });
 
+      it('should prefer primary translation', function() {
+        i18n.configure({
+          locales: ['en-US', 'en'],
+          fallbacks: { 'en-US': 'en' },
+          directory: './locales',
+        });
+        i18n.setLocale('en-US');
+        i18n.__('grade-A-name').should.equal('Grade A++');
+      });
+
+      it('should fallback to en.json when translation from en-US.json does not exist', function() {
+        i18n.configure({
+          locales: ['en-US', 'en'],
+          fallbacks: { 'en-US': 'en' },
+          directory: './locales',
+        });
+        i18n.setLocale('en-US');
+        i18n.__('grade-A-description').should.equal('Unlocked, all features are superb');
+      });
+
     });
 
     describe('i18nTranslatePlural', function() {

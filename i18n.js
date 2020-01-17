@@ -931,6 +931,7 @@ module.exports = (function() {
    * in the object at the requested location.
    */
   var localeAccessor = function(locale, singular, allowDelayedTraversal) {
+    locale = getBestMatchingLocaleWithFallback(locale, singular);
     // Bail out on non-existent locales to defend against internal errors.
     if (!locales[locale]) return Function.prototype;
 
@@ -1067,7 +1068,7 @@ module.exports = (function() {
     } else {
       // No object notation, just return a mutator that performs array lookup and changes the value.
       return function(value) {
-        locales[locale][singular] = value;
+        locales[getBestMatchingLocaleWithFallback(locale, singular)][singular] = value;
         return value;
       };
     }
@@ -1166,6 +1167,27 @@ module.exports = (function() {
       logDebug('will use ' + filepath);
     }
     return filepath;
+  };
+
+  var getBestMatchingLocaleWithFallback = function(locale, phrase) {
+    var path = objectNotation ? phrase.split(objectNotation) : [phrase];
+
+    var predicate = function(locale) {
+      if (!locales[locale]) return false;
+      var store = locales[locale];
+      for (var i = 0; i < path.length; ++i) {
+        if (!store.hasOwnProperty(path[i])) return false;
+        store = store[path[i]];
+      }
+      return true;
+    };
+    var possibleLocales = fallbacks[locale] ? [locale, fallbacks[locale]] : [locale];
+    for (var i = 0; i < possibleLocales.length; ++i) {
+      if (predicate(possibleLocales[i])) {
+        return possibleLocales[i];
+      }
+    }
+    return locale;
   };
 
   /**
