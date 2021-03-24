@@ -1,3 +1,7 @@
+# NOT IN USE AT SWAPPIE ANYMORE
+
+see https://github.com/swappiehq/mamma/pull/4163
+
 # i18n
 
 Lightweight simple translation module with dynamic json storage. Supports plain vanilla node.js apps and should work with any framework (like _express_, _restify_ and probably more) that exposes an `app.use()` method passing in `res` and `req` objects.
